@@ -1,0 +1,238 @@
+CHAT SERVER
+TUJUAN: melayani client dalam request chat dan melakukan komunikasi dengan server (realm lain)
+
+ATURAN PROTOKOL:
+- client harus mengirimkan request dalam bentuk string
+- string harus dalam format
+  REQUEST spasi PARAMETER
+- PARAMETER dapat berkembang menjadi PARAMETER1 spasi PARAMETER2 dan seterusnya
+
+REQUEST YANG DILAYANI:
+- informasi umum:
+  * Jika request tidak dikenali akan menghasilkan pesan
+    - status: ERROR
+    - data: protokol tidak benar
+  * Semua result akan diberikan dalam bentuk JSON dan diakhiri
+    dengan character ascii code #13#10#13#10 atau "\r\n\r\n"
+
+AUTH
+* TUJUAN: untuk melakukan autentikasi user yang terhubung ke server
+* PARAMETER: 
+  - PARAMETER1 : nama user
+  - PARAMETER2 : password user
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: token user
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+SEND
+* TUJUAN: untuk mengirimkan pesan private pada user dalam satu realm
+* PARAMETER: 
+  - PARAMETER1 : nama user
+  - PARAMETER2 : message
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Message sent"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+INBOX
+* TUJUAN: untuk menampilkan pesan private yang diterima user dari user lain dalam satu realm
+* PARAMETER: tidak ada
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar pesan
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+ADDGROUP
+* TUJUAN: untuk menambahkan group yang digunakan pada group chat
+* PARAMETER: 
+  - PARAMETER1 : nama group
+  - PARAMETER2 : password group
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Add group berhasil"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+JOINGROUP
+* TUJUAN: untuk menambahkan user ke suatu group
+* PARAMETER: 
+  - PARAMETER1 : nama group
+  - PARAMETER2 : password group
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Join group berhasil"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+INBOXGROUP
+* TUJUAN: untuk menampilkan pesan yang dikirim ke group dalam satu realm
+* PARAMETER: 
+  - PARAMETER1 : nama group
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar pesan
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+SENDGROUP
+* TUJUAN: untuk mengirimkan pesan ke suatu group dalam satu realm
+* PARAMETER: 
+  - PARAMETER1 : nama group
+  - PARAMETER2 : pesan
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Message Sent"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+ADDREALM
+* TUJUAN: untuk melakukan koneksi realm lain dengan membuat thread komunikasi dan mengirim ACKREALM ke realm target
+* PARAMETER: 
+  - PARAMETER1 : nama realm tujuan
+  - PARAMETER2 : address realm tujuan
+  - PARAMETER2 : port realm tujuan
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Connect realm berhasil"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+ACKREALM
+* TUJUAN: untuk membuat thread komunikasi pada realm target ADDREALM, dipanggil dari sisi server
+* PARAMETER: 
+  - PARAMETER1 : nama realm tujuan
+  - PARAMETER2 : address tujuan
+  - PARAMETER3 : port tujuan
+  - PARAMETER4 : address sumber
+  - PARAMETER5 : port sumber
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Connect realm berhasil"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+CHECKREALM
+* TUJUAN: untuk menampilkan daftar realm yang terconnect dengan server
+* PARAMETER: tidak ada
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar realm
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+  
+SENDREALM
+* TUJUAN: untuk mengirimkan pesan private pada user di realm lain
+* PARAMETER: 
+  - PARAMETER1 : nama realm
+  - PARAMETER2 : nama user tujuan
+  - PARAMETER3 : pesan
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Pesan realm dikirim"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+INBOXREALM
+* TUJUAN: untuk menampilkan pesan private yang dikirim ke user terautentikasi dari realm lain dengan mengirimkan REMOTEINBOXREALM ke realm target
+* PARAMETER: 
+  - PARAMETER1 : nama realm
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar pesan
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+REMOTEINBOXREALM
+* TUJUAN: untuk mendapatkan pesan private private yang dikirim ke user terautentikasi dari realm lain, dipanggil dari sisi server
+* PARAMETER: 
+  - PARAMETER1 : nama user tujuan
+  - PARAMETER2 : nama realm
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar pesan
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+SENDGROUPREALM
+* TUJUAN: untuk mengirimkan pesan antar realm dalam group dengan menambahkan pesan pada queue thread di server dan mengirim RECVGOUPREALM ke realm target
+* PARAMETER: 
+  - PARAMETER1 : nama realm
+  - PARAMETER2 : nama group
+  - PARAMETER3 : pesan
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Pesan grup realm terkirim"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+RECVGROUPREALM
+* TUJUAN: menambahkan pesan pada queue thread di server tujuan SENDGROUPREALM, dipanggil dari sisi server
+* PARAMETER: 
+  - PARAMETER1 : nama realm
+  - PARAMETER2 : nama user pengirim
+  - PARAMETER2 : nama group
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: pesan "Pesan grup realm terkirim"
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+INBOXGROUPREALM
+* TUJUAN: untuk menampilkan pesan yang dikirim ke user dari group multi-realm dengan mengirimkan REMOTEINBOXGROUPREALM ke realm target
+* PARAMETER: 
+  - PARAMETER1 : nama realm
+  - PARAMETER2 : nama group
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar pesan
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
+
+REMOTEINBOXGROUPREALM
+* TUJUAN: untuk mendapatkan pesan yang dikirim ke user dari group multi-realm, dipanggil dari sisi server
+* PARAMETER: 
+  - PARAMETER1 : nama group
+  - PARAMETER2 : nama realm
+* RESULT:
+- BERHASIL:
+  - status: OK
+  - data: daftar pesan
+- GAGAL:
+  - status: ERROR
+  - data: pesan kesalahan
