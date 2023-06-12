@@ -9,6 +9,8 @@ class ChatClient:
         self.server_address = (TARGET_IP,TARGET_PORT)
         self.sock.connect(self.server_address)
         self.tokenid=""
+        self.address_ip = TARGET_IP
+        self.address_port = TARGET_PORT
 
     def proses(self,cmdline):
         j=cmdline.split(" ")
@@ -181,7 +183,7 @@ class ChatClient:
     def addrealm(self, realm_id, realm_address, realm_port):
         if (self.tokenid==""):
             return "Error, not authorized"
-        string="addrealm {} {} {}\r\n" . format(realm_id, realm_address, realm_port)
+        string="addrealm {} {} {} {} {}\r\n" . format(realm_id, realm_address, realm_port, self.address_ip, self.address_port)
         result = self.sendstring(string)
         if result['status']=='OK':
             return "added {} realm" . format(realm_id)
@@ -201,7 +203,7 @@ class ChatClient:
     def sendrealm(self, realm_id, usernameto, message):
         if (self.tokenid==""):
             return "Error, not authorized"
-        string="sendrealm {} {} {} {}\r\n" . format(self.tokenid, realm_id, usernameto, message)
+        string="sendrealm {} {} {} {} {} {}\r\n" . format(self.address_ip, self.address_port, self.tokenid, realm_id, usernameto, message)
         result = self.sendstring(string)
         if result['status']=='OK':
             return "realm message sent to user {} realm {}" . format(usernameto, realm_id)
@@ -221,7 +223,7 @@ class ChatClient:
     def sendgrouprealm(self, realm_id, groupname, message):
         if (self.tokenid==""):
             return "Error, not authorized"
-        string="sendgrouprealm {} {} {} {} \r\n" . format(self.tokenid, realm_id, groupname, message)
+        string="sendgrouprealm {} {} {} {} {} {} \r\n" . format(self.address_ip, self.address_port, self.tokenid, realm_id, groupname, message)
         result = self.sendstring(string)
         if result['status']=='OK':
             return "group message sent to {} group in realm {}" . format(groupname, realm_id)
